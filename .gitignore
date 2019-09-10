@@ -1,0 +1,9 @@
+*.pyc
+*.DS_Store
+db.*
+.vscode/
+.idea/
+node_modules/
+.brackets.json
+media/
+static/build/

@@ -1,0 +1,17 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="blog-container">
+
+<h1>Add information about your club</h1>
+<form method="post" class="form-group">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button class="btn btn-default blog-sub">Submit</button>
+
+</form>
+</div>
+
+
+{% endblock %}

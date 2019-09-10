@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Techspace USICT | GGSIPU</title>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="{% static 'img/TS-1.jpg' %}">
+    <link rel="stylesheet" href="{% static 'css/community_style.css' %}">
+
+    <meta name="viewport" content="width=device-width">
+</head>
+<body>
+
+{% include '../community/components/navbar.html' %}
+
+
+<div class="container-fluid">
+
+	<div class="container">
+    <br>
+    <div class="row">
+        <div class="d-none d-sm-block col-md-2"></div>
+        <div class="col-xs-12 col-md-8 card profile-container">
+            <div class="row">
+                <div class="col-xs-8 col-md-9">
+                    {% if profile.name%}
+                        <h2 class="profile-name">{{ profile.name }}</h2>
+                        <h2 class="profile-username">@{{ profile.user.username }}</h2>
+                    {% elif user.is_authenticated and user.username == profile.user.username %}
+                        <h2 class="profile-name">@{{ profile.user.username }}</h2>
+                        <a href="{% url 'log:edit_profile' name=profile.user.username %}" class="grey-hint small-p">What's your name?</a><br><br>
+                    {% else %}
+                        <h2 class="profile-name">@{{ profile.user.username }}</h2><br>
+                    {% endif %}
+
+                    {% if profile.bio %}<p class="profile-bio">{{ profile.bio }}</p>
+                    {% elif user.is_authenticated and user.username == profile.user.username %}<a href="{% url 'log:edit_profile' name=profile.user.username %}" class="grey-hint small-p"><i class="fa fa-plus"></i>Add a bio</a><br><br>{% endif %}
+
+                    {% if profile.course %}<h6>{{ profile.course }}</h6>
+                    {% elif user.is_authenticated and user.username == profile.user.username %}<a href="{% url 'log:edit_profile' name=profile.user.username %}" class="grey-hint small-p"><i class="fa fa-plus"></i>Add your course</a><br><br>{% endif %}
+
+
+                    {% if profile.institution %}<h6>{{ profile.institution }}</h6>
+                    {% elif user.is_authenticated and user.username == profile.user.username %}<a href="{% url 'log:edit_profile' name=profile.user.username %}" class="grey-hint small-p"><i class="fa fa-plus"></i>Add your institution</a><br><br>{% endif %}
+
+                    <a href="{{ profile.facebook }}" class="profile-social-link"><i class="fa fa-facebook"></i></a>
+                    <a href="{{ profile.twitter }}" class="profile-social-link"><i class="fa fa-twitter"></i></a>
+                    <a href="{{ profile.email }}" class="profile-social-link"><i class="fa fa-envelope"></i></a>
+                    <a href="{{ profile.linkedIn }}" class="profile-social-link"><i class="fa fa-linkedin"></i></a>
+                    <a href="{{ profile.github }}" class="profile-social-link"><i class="fa fa-github"></i></a>
+                    {% if user.is_authenticated and user.username == profile.user.username %}<a href="{% url 'log:edit_profile' name=profile.user.username %}" class="grey-hint small-p">Edit social links</a>{% endif %}
+
+                </div>
+                <div class="col-xs-4 col-md-3 text-center">
+                    <div class="profile-img" style="background:url({% if profile.profile_pic %}{{ profile.profile_pic.url }}{% else %} {% static './img/default_user.png' %} {% endif %});background-size: cover;background-position: center;"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <br>
+                    <!-- If other user -->
+                    {% if user.username != profile.user.username %}
+                    <span class="small-p"><a href="{% url 'log:send_message' name=profile.user.username %}">Send Message</a></span>
+                        {% if user.is_authenticated %}
+                        <span class="small-p"> | <a href="{% url 'log:report_user' name=profile.user.username %}" class="small-p">Report User</a></span>
+                        {% endif %}
+                    {% endif %}
+                    <!-- If logged in -->
+                    {% if user.is_authenticated and user.username == profile.user.username %}
+                    <span class="small-p"><a href="{% url 'log:edit_profile' name=profile.user.username %}" class="small-p">Edit profile </a></span>
+                    <span class="small-p">| <a href="{% url 'log:inbox' name=profile.user.username %}" class="small-p">Inbox({{message_notifications|length}})</a></span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+	</div>
+<br>
+
+    <div class="container">
+        <div class="row pills">
+            <div class="d-none d-sm-block col-md-2"></div>
+            <div class="col-xs-12 col-md-8 posts-container">
+                <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'log:dashboard' name=profile.user.username %}">Blogs</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'discussions' %}active{% endif %}" href="{% url 'log:discussions' name=profile.user.username %}">Discussions</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'comments' %}active{% endif %}" href="{% url 'log:comments' name=profile.user.username %}">Comments</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'portfolio' %}active{% endif %}" href="{% url 'log:portfolio' name=profile.user.username %}">Portfolio</a>
+                  </li>
+                  <!-- <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Portfolio</a>
+                  </li> -->
+                  <!-- <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Teams</a>
+                  </li> -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% block content %}
+{% endblock %}
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+{% block scripts %}
+{% endblock %}
+</body>
+</html>

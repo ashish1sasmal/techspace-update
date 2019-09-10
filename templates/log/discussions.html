@@ -1,0 +1,68 @@
+{% extends './base.html' %}
+{% block content %}
+
+<div class="container">
+
+    <ul class="posts">
+
+    <!-- Begin post -->
+
+    <li class="row card-post">
+        <div class="d-none d-sm-block col-md-2"></div>
+        <div class="col-xs-12 col-md-8 card">
+            <div class="row">
+              {% if posts  %}
+              {% for post in posts  %}
+               {% if not post.isblog %}
+                <div class="col-xs-6 col-md-12 discussion-content">
+                  <a href="{% url 'blog:post-detail' slug=post.slug %}" class="blog-post-profile"><h5>{{post.title}}</h5></a>
+                  <h6 class="blog-date">{{post.date}} by <a href="{% url 'log:dashboard' name=post.author %}">{{post.author}}</a></h6>
+                    {% if post.image %}
+                   <div class="discussion-image-xs d-block d-sm-none" style="background-image: url('{{ post.image.url }}');background-size: cover;background-position: center;"></div><hr>
+                    {% endif %}
+                  <p>{{ post.content|safe }}</p>
+                  <br>
+                  <div class="post-actions" style="position:absolute;bottom:1rem">
+                    <p class="small-p" style="display: inline;">Upvotes ({{ post.upvotes }})</p> |
+                    <p class="small-p" style="display: inline;">{{ post.comments.all.count }} comments</p>
+                      {% if user == profile %}
+                       | <form action="#" method="get">
+                          <button class="post-actions-button small-p">Edit</button>
+                        </form> |
+                        <form action="#" method="post" >
+                          <button class="post-actions-button small-p">Delete</button>
+                        </form>
+                      {% endif %}
+                 </div>
+
+                </div>
+
+                {% else %}
+              <div style="padding :10px">
+                <h5>{% if user.is_authenticated and profile.user.username == user.username %} You haven't posted anything. <a href="{% url 'blog:post-add' %}">Post a question, an image or anything interesting.
+                </a>
+              {% else %} No posts to show.                
+              {% endif %}</h5>
+                {% endif %}
+                {% endfor %}
+              {% else %}
+              <div style="padding :10px">
+                <h5>{% if user.is_authenticated and profile.user.username == user.username %} You haven't posted anything.<a href="{% url 'blog:post-add' %}">Post a question, an image or anything interesting.</a>
+                {% else %} No posts to show.
+              {% endif %}</h5>
+              </div>
+
+              {% endif %}
+            </div>
+              <!-- <div class="col-xs-6 col-md-4"> -->
+
+        </div>
+    </li>
+    <!-- End post -->
+
+  </ul>
+</div>
+
+{% endblock %}
+
+

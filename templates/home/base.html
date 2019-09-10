@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Techspace USICT | GGSIPU</title>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+    {% load staticfiles %}
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa|Righteous|Do+Hyeon|Lobster+Two|Quicksand|Ubuntu|Raleway|Roboto|Roboto+Mono|Titillium+Web" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="{% static './img/TS-1.jpg' %}">
+    <link rel="stylesheet" href="{% static './css/home.css' %}">
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"
+    integrity="sha384-OHBBOqpYHNsIqQy8hL1U+8OXf9hH6QRxi0+EODezv82DfnZoV7qoHAZDwMwEJvSw"
+    crossorigin="anonymous">
+
+<meta name="viewport" content="width=device-width">
+</head>
+<body>
+<div class="small-banner-top">The rendered space Makerspace program is live. <a href="http://rendered.techspace.club" target="_blank">Click here</a></div>
+{% include './components/navbar.html' %}
+
+{% block content %}
+{% endblock %}
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.0.0/particles.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script type="text/javascript" src="{% static './js/script.js' %}"></script>
+</body>
+</html>

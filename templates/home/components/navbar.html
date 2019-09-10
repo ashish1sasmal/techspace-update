@@ -1,0 +1,56 @@
+<nav class="navbar navbar-expand-sm sticky-top navbar-light flex-nowrap">
+    <div class="navbar-collapse collapse w-100 order-1 order-sm-0 dual-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'community:index' %}">Community</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'event:events' %}">Events</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'home:achievements' %}">Achievements</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/'%} scrollTo {% endif %}" href="{% url 'home:index' %}#clubs">Clubs @Techspace</a>
+            </li>
+            {% if request.path != '/alumni/'%} 
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'alumni' %}">Alumni</a>
+            </li>
+            {% endif %}
+            {% if request.path != '/'%} 
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/'%} scrollTo {% endif %}" href="{% url 'home:index' %}#contact">Contact Us</a>
+            </li>
+            {% endif %}
+<!--             <li class="nav-item">
+                <a class="nav-link" href="#"></a>
+            </li> -->
+        </ul>
+    </div>
+    <button class="navbar-toggler mr-2" type="button" data-toggle="collapse" data-target=".dual-collapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="mx-auto order-0">
+        <a class="navbar-brand mx-auto" href="{% url 'home:index' %}"><img src="{% static 'img/TS-1.jpg' %}" class="nav-logo"></a>
+    </div>
+    <!-- <span class="navbar-brand w-100">Navbar 5</span> -->
+    <div class="navbar-collapse collapse order-3 order-sm-2 w-100 dual-collapse d-none d-sm-block">
+        <ul class="navbar-nav ml-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <!-- <a href="#" class="small-p"><i class="fa fa-bell"></i>Notifications</a>&nbsp; -->
+
+              <a class="btn-wire-dark" href="{% url 'logout' %}">Logout </a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="btn-wire-dark" href="{% url 'login' %}">Sign in</a>
+            </li>
+          {% endif %}
+
+
+        </ul>
+    </div>
+    <div class="w-75 d-block d-sm-none spacer"><!-- spacer --></div>
+</nav>

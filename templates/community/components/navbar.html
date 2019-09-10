@@ -1,0 +1,124 @@
+<nav class="navbar navbar-expand-sm navbar-light flex-nowrap" style="font-family: 'Quicksand'">
+<div class="navbar-collapse collapse w-100 order-1 order-sm-0 dual-collapse">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="{% url 'community:index' %}">Community</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'event:events' %}">Events</a>
+        </li>
+        <!-- <li class="nav-item">
+            <a class="nav-link scrollTo" href="{% url 'home:index' %}#clubs">Clubs @Techspace</a>
+        </li> -->
+        {% if user.is_authenticated %}
+        <li class="nav-item d-block d-sm-none">
+            <a class="nav-link scrollTo" href="{% url 'log:dashboard' name=user.username %}">Dashboard</a>
+        </li>
+        <li class="nav-item d-block d-sm-none">
+            <a class="nav-link scrollTo" href="{% url 'logout' %}">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item d-block d-sm-none">
+            <a class="nav-link scrollTo" href="{% url 'login' %}">Sign In</a>
+        </li>
+        {% endif %}
+        <!-- <li class="nav-item">
+            <a class="nav-link scrollTo" href="{% url 'home:index' %}#contact"></a>
+        </li> -->
+<!--             <li class="nav-item">
+            <a class="nav-link" href="#"></a>
+        </li> -->
+    </ul>
+</div>
+<div class="mx-auto order-0">
+    <a class="navbar-brand mx-auto" href="/"><img src="{% static './img/TS-1.jpg' %}" class="nav-logo"></a>
+</div>
+<button class="navbar-toggler mr-2" type="button" data-toggle="collapse" data-target=".dual-collapse">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<!-- <span class="navbar-brand w-100">Navbar 5</span> -->
+<div class="navbar-collapse collapse order-3 order-sm-2 w-100 dual-collapse d-none d-sm-block">
+    <ul class="navbar-nav ml-auto">
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <div class="dropdown">
+            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="-10,20">
+              <i class="fa fa-bell" aria-hidden="true"></i><span class="badge badge-light">{{notification_count}}</span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 200px;">
+              <div class="list-group">
+                <a href="{% url 'log:inbox' name=user.username %}">
+                  <button class="list-group-item">
+                    <p>You have {{message_notifications|length}} new messages.</p>
+                  </button>
+                </a>
+
+                  {% if upvote_notifications %}
+                    {% regroup upvote_notifications by post as post_upvote_list %}
+                    {% for post in post_upvote_list %}
+                    <a href="{% url 'blog:blog-detail' post.grouper.slug %}">
+                      <button class="list-group-item">
+                          <p>{{post.list|length}} user{{post.list|length|pluralize}} liked your post - {{post.grouper.title}}</p>
+                      </button>
+                    </a>
+                    {% endfor %}
+                  {% endif %}
+
+                {% if comment_notifications %}
+
+                  {% regroup comment_notifications by post as post_comment_list %}
+                  {% for post in post_comment_list %}
+                    <a href="{% url 'blog:blog-detail' post.grouper.slug %}">
+                      <button class="list-group-item">
+                        <p>{{post.list|length}} user{{post.list|length|pluralize}} commented on your post - {{post.grouper.title}}</p>
+                      </button>
+                    </a>
+                  {% endfor %}
+                {% endif %}
+
+                {% if comment_mention_notifications %}
+
+                  {% for notification in comment_mention_notifications %}
+                    <a href="{% url 'blog:blog-detail' notification.comment.post.slug %}">
+                      <button class="list-group-item">
+                        <p>{{notification.comment.comment_author}} mentioned you in a comment on post - {{notification.comment.post.title}}</p>
+                      </button>
+                    </a>
+                  {% endfor %}
+                {% endif %}
+
+                {% if post_mention_notifications %}
+
+                  {% for notification in post_mention_notifications %}
+                    <a href="{% url 'blog:blog-detail' notification.post.slug %}">
+                      <button class="list-group-item">
+                        <p>{{notification.post.author}} mentioned you in a post - {{notification.post.title}}</p>
+                      </button>
+                    </a>
+                  {% endfor %}
+                {% endif %}
+
+              </div>
+
+            </div>
+          </div>
+
+        </li>
+            <!-- <button class="btn-wire-dark">Sign in</button> or-->
+        <li class="nav-item">
+            <a href="{% url 'log:dashboard' name=user.username %}" title="Profile @{{user.username}}" class="">
+              <div class="nav-user-img" style="background-image: url({% if userprofile.profile_pic %}{{ userprofile.profile_pic.url }}{% else %} {% static './img/default_user.png' %} {% endif %}); background-size: cover"></div>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="btn-wire-dark" href="{% url 'logout' %}" style="margin-top: 5px;display: inline-block;">Logout </a>
+        </li>
+        {% else %}
+            <li class="nav-item">
+              <a class="btn-wire-dark" href="{% url 'login' %}">Sign in</a>
+            </li>
+        {% endif %}
+    </ul>
+</div>
+<div class="w-75 d-block d-sm-none spacer"><!-- spacer --></div>
+</nav>

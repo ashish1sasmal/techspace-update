@@ -1,0 +1,47 @@
+{% extends '../community/base.html' %}
+
+{% block title %} - Login{% endblock %}
+
+{% block content %}
+
+
+<div class="container text-center">
+	<div class="row">
+	<div class="col-md-4"></div>
+	<div class="col-xs-12 col-md-4 card login-card">
+	<h5 class="small-heading">Login to Techspace community.</h5>
+	{% include 'global_components/django_messages.html' %}
+
+	<br>
+
+	<form action="{% url 'login' %}" method="POST">
+		{% csrf_token %}
+
+		{{ errors }}
+		<input class="form-control" type="text" name="username" placeholder="Username" required><br>
+		<input class="form-control" type="password" name="password" placeholder="Password" required><br>
+		{% if error %}
+	                    <p class=" label label-danger">
+	                        Your username and password didn't match.
+	                        Please try again.
+	                    </p>
+	    {% endif %}
+
+		{% if request.GET.next %}
+		<input type="hidden" name="next" value="{{ request.GET.next }}">
+		{% endif %}
+
+		<button class="btn btn-block btn-wire-dark-simple">Login</button>
+		<br>
+	</form>
+	<p>Not registered? Create an <a href="{% url 'register' %}">account</a>.</p>
+	<p><a href="{% url 'reset_password' %}">Forgot your password?</a></p>
+
+
+
+
+	</div>
+	</div>
+</div>
+
+{% endblock %}

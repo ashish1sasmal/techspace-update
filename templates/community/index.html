@@ -1,0 +1,331 @@
+{% extends './base.html' %}
+{% block content %}
+
+{% if user.is_authenticated %}
+{% if not userprofile.email_activated %}
+<div style="text-align: center;" class="alert alert-warning" role="alert">
+  Please verify your email address.
+  <a href="{% url 'send_activation_email' %}"><button class="btn btn-primary">Verify</button></a>
+</div>
+{% endif %}
+{% endif %}
+
+<div class="container-fluid content-posts">
+    <div class="row">
+    <div class="col-xs-12 col-md-8 content-posts-main">
+        <br>
+        <h4 class="small-heading">Discussions
+        <div class="hr"></div>
+        </h4>
+        <div class="toolbar-posts">
+           <h6 class="float-right"><a href="{% url 'blog:blog-add' %}">Create New Blog</a> | <a href="{% url 'blog:post-add' %}">Submit New Post</a></h6>
+            <!-- <p>Sort by:
+            <select>
+                <option>Time</option>
+                <option>Points</option>
+            </select>
+            &nbsp;
+            Filter by:
+            <select>
+                <option>Codeschool</option>
+                <option>Cogitans</option>
+            </select>
+            </p> -->
+        </div>
+        <br>
+        <ul class="posts">
+          {% for blog in pinned_blogs reversed %}
+            <li class="row">
+                <div class="col-xs-12 col-md-12">
+                  <div class="small-xs">
+
+
+                  <h5 class="blog-title">{{blog.title}}
+                    {% if blog.isblog %}
+                      <span style="color:#fd7e14;" class="small-p"> Blogpost<i class="fa fa-sticky-note-o" aria-hidden="true"></i></span>
+                    {% endif %}
+                    <span class="small-p pinned" style="color: green">Pinned Post <i class="fa fa-thumb-tack" aria-hidden="true"></i></span>
+                  </h5>
+
+                    <h6 class="blog-date">{{ blog.date }} by <a href="{% url 'log:dashboard' name=blog.author %}">{{ blog.author }}</a></h6>
+                    {% if blog.isblog %}
+                    <div class="col-xs-10 col-md-10 blog-description-col">
+                      <p class="blog-description">{{ blog.description|urlize|truncatewords:50|linebreaks }}<a href="{% url 'blog:blog-detail' blog.slug %}"><span class="read-more small-p">(Read full post)</span></a></p>
+                    </div>
+                    {% else %}
+                    <div class="col-xs-10 col-md-10 blog-description-col">
+                      <p class="blog-description">{{ blog.content|safe|urlize|truncatewords:50|linebreaks }}<a href="{% url 'blog:post-detail' blog.slug %}"><span class="read-more small-p">(Read full post)</span></a></p>
+                    </div>
+                    {% endif %}
+                    {% if blog.image.url is not None %}
+                    <div class="post-image" style="background: url('{{ blog.image.url }}');background-size: cover;background-position: center;">
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="col-xs-12 col-md-12 post-actions">
+                      <!-- <form class="form-horizontal" action="{% url 'community:toggle-upvote'%}" method="post">
+                          <input type="hidden" value="{{ blog.title }}" name="title">
+                          <input type="hidden" value="0" name="onDetailPage">
+                          {% csrf_token %}
+                          <input type="hidden" value="{{ blog.state }}" name="state">
+                              {% if blog.state == 1 %}
+                                  <button type="submit" class="post-actions-button small-p upvoted"><i class="fa fa-thumbs-up"></i> Upvoted({{ blog.upvotes }})</button> |
+                              {% endif %}
+                              {% if blog.state == 0 %}
+                                  <button type="submit" class="post-actions-button small-p"><i class="fa fa-thumbs-up"></i> Upvote ({{ blog.upvotes }})</button> |
+                              {% endif %}
+                      </form> -->
+                      <form class="form-horizontal upvote-form" id="{{ blog.id }}" action="{% url 'community:toggle-upvote'%}" method="post">
+                          <input type="hidden" value="{{ blog.id }}" name="id">
+                          {% csrf_token %}
+                          <input type="hidden" id="state-{{blog.id}}" value="{{ blog.state }}" name="state">
+                          <button type="submit" id="btn-{{ blog.id }}" class="post-actions-button small-p {%if blog.state == 1%}upvoted{%else%}{%endif%}"><i class="fa fa-thumbs-up"></i> ({{ blog.upvotes }}){%if blog_detail.state == 1%}Upvoted{% else %}Upvote{% endif %}</button> |
+                      </form>
+
+
+                      {% if blog.isblog %}<a href="{% url 'blog:blog-detail' blog.slug %}" class="small-p">{% else %}
+                        <a href="{% url 'blog:post-detail' blog.slug %}" class="small-p">
+                        {% endif %}
+                      {{ blog.no_of_comments }} comments</a>
+                      {% if user.username == blog.author %}
+                        | {% if blog.isblog %}
+                    <form action="{% url 'blog:blog-edit' blog.slug %}" method="get">
+                          <button class="post-actions-button small-p">Edit</button>
+                        </form>
+                    {% else %}
+                    <form action="{% url 'blog:post-edit' blog.slug %}" method="get">
+                          <button class="post-actions-button small-p">Edit</button>
+                        </form>
+                    {% endif %} |
+                        <form action="{% url 'blog:blog-delete' blog.slug %}" method="post" >
+                          {% csrf_token %}
+                          <button class="post-actions-button small-p"  onclick="return confirm('Are you sure you want to delete this?')">Delete</button>
+                        </form>
+                      {% endif %}
+                    {% if blog.tags.all %}
+                      | <span class="small-p">Tags:</span>
+                      {% for tag in blog.tags.all %}
+                      <span class="tag">{{ tag }}</span>
+                      {% endfor %}
+                    {% endif %}
+                    {% comment %} <a href="#" class="small-p"></a> | {% endcomment %}
+
+                </div>
+            </li>
+            <hr>
+
+          {% endfor %}
+
+          {% for blog in blogs reversed %}
+            <li class="row">
+                <div class="col-xs-12 col-md-12">
+                  <div class="small-xs">
+                    <h5 class="blog-title">{{blog.title}}
+                      {% if blog.isblog %}
+                      <span style="color:#fd7e14;" class="small-p"> Blogpost<i class="fa fa-sticky-note-o" aria-hidden="true"></i> </span>
+                      {% endif %}
+                    </h5>
+                    <h6 class="blog-date">{{ blog.date }} by <a href="{% url 'log:dashboard' name=blog.author %}">{{ blog.author }}</a></h6>
+                    {% if blog.isblog %}
+                    <div class="col-xs-10 col-md-10 blog-description-col">
+                      <p class="blog-description">{{ blog.description|truncatewords:100|urlize }}<a href="{% url 'blog:blog-detail' blog.slug %}"><span class="read-more small-p">(Read full post)</span></a></p>
+                    </div>
+                    {% else %}
+                    <div class="col-xs-10 col-md-10 blog-description-col">
+                      <p class="blog-description">{{ blog.content|safe|urlize|truncatewords:100 }}<a href="{% url 'blog:post-detail' blog.slug %}"><span class="read-more small-p">(Read full post)</span></a></p>
+                    </div>
+                    {% endif %}
+                    {% if blog.image.url is not None %}
+                    <div class="post-image" style="background: url('{{ blog.image.url }}');background-size: cover;background-position: center;">
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="col-xs-12 col-md-12 post-actions">
+                      <!-- <form class="form-horizontal" action="{% url 'community:toggle-upvote'%}" method="post">
+                          <input type="hidden" value="{{ blog.title }}" name="title">
+                          <input type="hidden" value="0" name="onDetailPage">
+                          {% csrf_token %}
+                          <input type="hidden" value="{{ blog.state }}" name="state">
+                              {% if blog.state == 1 %}
+                                  <button type="submit" class="post-actions-button small-p upvoted"><i class="fa fa-thumbs-up"></i> Upvoted({{ blog.upvotes }})</button> |
+                              {% endif %}
+                              {% if blog.state == 0 %}
+                                  <button type="submit" class="post-actions-button small-p"><i class="fa fa-thumbs-up"></i> Upvote ({{ blog.upvotes }})</button> |
+                              {% endif %}
+                      </form> -->
+                      <form class="form-horizontal upvote-form" id="{{ blog.id }}" action="{% url 'community:toggle-upvote'%}" method="post">
+                          <input type="hidden" value="{{ blog.id }}" name="id">
+                          {% csrf_token %}
+                          <input type="hidden" id="state-{{blog.id}}" value="{{ blog.state }}" name="state">
+                          <button type="submit" id="btn-{{ blog.id }}" class="post-actions-button small-p {%if blog.state == 1%}upvoted{%else%}{%endif%}"><i class="fa fa-thumbs-up"></i> ({{ blog.upvotes }}){%if blog_detail.state == 1%} Upvoted{% else %} Upvote{% endif %}</button> |
+                      </form>
+
+                      {% if blog.isblog %}<a href="{% url 'blog:blog-detail' blog.slug %}" class="small-p">{% else %}
+                        <a href="{% url 'blog:post-detail' blog.slug %}" class="small-p">
+                        {% endif %}{{ blog.no_of_comments }} comments</a>
+                      {% if user.username == blog.author %}
+                        | {% if blog.isblog %}
+                    <form action="{% url 'blog:blog-edit' blog.slug %}" method="get">
+                          <button class="post-actions-button small-p">Edit</button>
+                        </form>
+                    {% else %}
+                    <form action="{% url 'blog:post-edit' blog.slug %}" method="get">
+                          <button class="post-actions-button small-p">Edit</button>
+                        </form>
+                    {% endif %}
+                    |
+                        <form action="{% url 'blog:blog-delete' blog.slug %}" method="post" >
+                          {% csrf_token %}
+                          <button class="post-actions-button small-p" onclick="return confirm('Are you sure you want to delete this?')">Delete</button>
+                        </form>
+                      {% endif %}
+                    {% if blog.tags.all %}
+                      | <span class="small-p">Tags:</span>
+                      {% for tag in blog.tags.all %}
+                      <span class="tag">{{ tag }}</span>
+                      {% endfor %}
+                    {% endif %}
+                    {% comment %} <a href="#" class="small-p"></a> | {% endcomment %}
+
+                </div>
+            </li>
+            <hr>
+
+          {% endfor %}
+
+        </ul>
+          <!-- {% if blogs.has_other_pages %}
+          <ul class="pagination">
+            {% if blogs.has_previous %}
+            <li><a href="?pages={{ blogs.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+            <li class="disabled"> <span>&laquo;</span> </li>
+            {% endif %}
+
+            {% for i in blogs.paginator.page_range %}
+              {% if blogs.number == i %}
+                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span> </span> </li>
+              {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a> </li>
+              {% endif  %}
+            {% endfor %}
+
+            {% if blogs.has_next %}
+              <li><a href="?page={{ blogs.next_page_number }}">&raquo;</a> </li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span> </li>
+            {% endif %}
+
+          </ul>
+          {% endif %} -->
+
+
+        <div class="toolbar-posts-bottom">
+          {% if blogs.has_previous %}
+            <a href="?pages={{ blogs.previous_page_number }}" class="btn-wire-dark">Previous</a>
+          {% else %}
+          <a class="btn-wire-dark disabled">Previous</a>
+          {% endif %}
+          {% if blogs.has_next %}
+            <a href="?page={{ blogs.next_page_number }}" class="btn-wire-dark">Next</a>
+          {% else %}
+            <a class="btn-wire-dark disabled">Next</a>
+          {% endif %}
+
+            <br>
+        </div>
+    </div>
+
+   <div class="col-xs-12 col-md-4 right-aside">
+        <div class="sticky">
+            <div class="col-xs-12">
+                <br>
+                <h4 class="small-heading">Latest News
+                        <div class="hr"></div>
+                </h4>
+                <ul class="list-group">
+                    {% if latest_posts %}
+                    {% for latest in latest_posts reversed %}
+                    <li class="list-group-item">
+                        <h5>{{latest.title}}</h5>
+                        <h6 class="blog-date">{{latest.date}}</h6>
+                        <p>{{latest.content|truncatewords:150}} <a href="{% url 'latest:latest_posts_detail' latest.slug %}">more...</a></p>
+                    </li>
+                    {% endfor %}
+                    <a href="{% url 'latest:latest_posts' %}" class="list-group-item"><div class="text-center">See all Posts</div></a>
+                    {% else %}
+                    <h3>No upcoming posts.</h3>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-xs-12">
+                <br>
+                    <h4 class="small-heading">Upcoming Events
+                        <div class="hr"></div>
+                    </h4>
+                    <ul class="list-group">
+                      {% if events %}
+                      {% for event in events reversed %}
+                          <div class="card" id="event_card">
+                              <div class="card-body d-flex flex-column">
+                                    <h2 class="card-title text-center"> {{ event.title }} </h2>
+                                    <div class="underline_events"></div>
+                                    <h5 class="card-subtitle" id="card_subtitle" style="line-height:2;"><b>Event date:</b> {{ event.event_date }} </h5>
+                                    <h5 class="card-subtitle" id="card_subtitle" style="line-height:2;"><b>Time</b> {{ event.time }} </h5>
+                                    <h5 class="card-subtitle" id="card_subtitle" style="line-height:2;"><b>Venue</b> {{ event.venue }} </h5>
+
+
+                                    <!-- <h5 class="card-text" id="card_body"> {{ event.content|linebreaks|truncatewords:50 }} </h5> -->
+                                  <a href="{%url 'event:detail' event.slug %}" class="btn-wire-dark align-self-end mt-auto" id="event_details">Details</a>
+                                </div>
+                      {% endfor %}
+                      <a href="{% url 'event:events' %}" class="list-group-item"><div class="text-center">See all events</div></a>
+                      {% else %}
+                      <h3>No upcoming events.</h3>
+                      {% endif %}
+                  </ul>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+
+  $(document).on('submit', '.upvote-form',function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var $form = $(this);
+      var url = $form.attr( "action" );
+      var thisId = $form.attr( "id" );
+      $.post(url, $form.serialize())
+          .done(function(data) {
+              if(data.user === "none"){
+                window.location = '/login/';
+              } else {
+                changeButton(data, thisId);
+              }
+          });
+  });
+
+    function changeButton(data, id){
+      if(data.state){
+        $("#btn-"+id).addClass("upvoted");
+        $("#btn-"+id).html('<i class="fa fa-thumbs-up"></i> ('+data.upvotes+') Upvoted');
+      }
+      else {
+        $("#btn-"+id).removeClass("upvoted");
+        $("#btn-"+id).html('<i class="fa fa-thumbs-up"></i> ('+data.upvotes+') Upvotes');
+      }
+      $("#state-"+id).val(data.state ? 1 : 0);
+    }
+
+
+</script>
+
+
+{% include './components/smallfooter.html' %}
+
+{% endblock %}
