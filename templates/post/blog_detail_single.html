@@ -30,7 +30,7 @@
 			{% if blog_detail.description != ''%}
 			<div class="row">
 				<div class="col col-xs-12 blog-page-description">
-					<p>{{ blog_detail.description }}</p>
+					<p>{{ blog_detail.description|urlize }}</p>
 				</div>
 			</div>
 			{% endif %}
@@ -72,7 +72,7 @@
 		</div>
 		{% endif %}
 
-		{{ blog_detail.content|safe|linebreaks }}
+		{{ blog_detail.content|safe|linebreaks|urlize }}
 
 	    {% if user.username == blog_detail.author %}
 		<div class="row text-center blog-page-tools d-block d-sm-none">
