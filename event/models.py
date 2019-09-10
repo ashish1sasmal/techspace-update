@@ -2,10 +2,9 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 # Create your models here.
-
 class Event(models.Model):
 	title = models.CharField(max_length=255)
-	author = models.CharField(max_length=255)
+	author = models.CharField(max_length=30)
 	date = models.DateTimeField(auto_now_add=True)
 	event_date = models.DateField()
 	time = models.TimeField()
