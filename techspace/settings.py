@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'codeschool',
     'cogitans',
     'droidclub',
+    'rooters',
     'ecell',
     'electrotech',
     'oslc',

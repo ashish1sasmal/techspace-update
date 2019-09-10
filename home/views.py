@@ -16,7 +16,7 @@ def index(request):
 	events = Event.objects.order_by('-date')[:2]
 		#clubs
 	club_objects = Club.objects.all()
-	app_urls = ['codeschool:index','cogitans:index','droidclub:index','ecell:index','electrotech:index','oslc:index','renderedusict:index','turingai:index']
+	app_urls = ['codeschool:index','cogitans:index','droidclub:index','ecell:index','electrotech:index','oslc:index','renderedusict:index','turingai:index','rooters:index']
 	clubs = zip(club_objects,app_urls)
 	#associations
 	# assocs = Association.objects.all()
